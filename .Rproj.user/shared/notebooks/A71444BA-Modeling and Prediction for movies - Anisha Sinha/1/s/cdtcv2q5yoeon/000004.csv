@@ -1,0 +1,2 @@
+"0","ggplot(data = pars_model, aes(sample = .resid)) +"
+"0","  stat_qq()"

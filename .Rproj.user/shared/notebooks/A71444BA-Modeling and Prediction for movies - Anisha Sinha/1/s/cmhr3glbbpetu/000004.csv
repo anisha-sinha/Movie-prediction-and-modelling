@@ -1,0 +1,2 @@
+"0","ggplot(data=my_data, aes(y= audience_score, x=title_type, fill=title_type ) ) + geom_boxplot() + ggtitle(""Audience Score vs Title type"") +  ylab(""Audience Score"") + xlab(""Type of Title"") + scale_fill_manual(values = c(""#9c869f"","
+"0","""#f77e8a"", ""#ffa600""))"

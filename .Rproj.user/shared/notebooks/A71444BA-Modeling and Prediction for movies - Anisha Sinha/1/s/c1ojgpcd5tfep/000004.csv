@@ -1,0 +1,1 @@
+"0","ggplot(data=my_data, aes(y= audience_score, x=best_dir_win, fill=best_dir_win ) ) + geom_boxplot() + ggtitle(""Audience Score vs Best Director"") +  xlab(""Best Director"") + ylab(""Audience Score"") + scale_fill_manual(values = c(""#9c869f"", ""#ffa600""))"

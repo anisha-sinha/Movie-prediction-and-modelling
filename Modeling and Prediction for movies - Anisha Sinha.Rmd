@@ -1,0 +1,301 @@
+---
+title: "Modeling and prediction for movies"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+library(statsr)
+```
+
+### Load data
+
+```{r load-data}
+load("movies.Rdata")
+```
+
+* * *
+
+## Part 1: Data
+
+The data set consists of 651 randomly sampled movies that released before 2016. We have data of movies released between the years 1970 to 2014.Each observation is independent and has no association with another. Random Sampling has been used. 
+
+Since this is an observational study and not an experimental one, we can only make generalised statements and not causal ones. Random Assignment was not used. 
+
+
+* * *
+
+## Part 2: Research question
+
+There are 32 variables in this data set. To analyse what makes a movie more popular, we will choose only certain variables that are relevant to this study. 
+
+1. title_type: Type of movie (Documentary, Feature Film, TV Movie)
+
+2. genre: Genre of movie (Action & Adventure, Comedy, Documentary, Drama, Horror, Mystery & Suspense, Other)
+
+3. runtime: Runtime of movie (in minutes)
+
+4. mpaa_rating: MPAA rating of the movie (G, PG, PG-13, R, Unrated)
+
+5. imdb_rating: Rating on IMDB
+
+6. critics_rating: Categorical variable for critics rating on Rotten Tomatoes (Certified Fresh, Fresh, Rotten)
+
+7. critics_score: Critics score on Rotten Tomatoes
+
+8. audience_rating: Categorical variable for audience rating on Rotten Tomatoes (Spilled, Upright)
+
+9. audience_score: Audience score on Rotten Tomatoes
+
+10. best_dir_win: Whether or not the director of the movie ever won an Oscar (no, yes) 
+
+11. top200_box: Whether or not the movie is in the Top 200 Box Office list on BoxOfficeMojo (no, yes)
+
+**Research Question**
+
+How do the above variables affect the popularity of a movie? 
+Audience score has been considered as a measure of popularity here. We will take all the other variables and try to see if there is any association between them and Audience score. 
+
+This analysis could be helpful in predicting the popularity of any other movie as well. 
+
+The variables to be used are mentioned above. 
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+```{r}
+my_data <- movies[c("title_type", "genre", "runtime", "mpaa_rating", "imdb_rating", "critics_rating", "critics_score", "audience_rating", "audience_score", "best_dir_win", "top200_box")] %>% na.omit()
+summary(my_data)
+```
+
+Above, I have created a new sub dataset - my_data. It consists of only those variables that we will be working with for this analysis. The summary of the data is shown above. 
+
+We can look at the summary and group the variables into two categories: categorical and numerical
+
+**Side-Side box plot** -> title_type, genre, mpaa_rating, critics_rating, audience_rating, best_dir_win, top200_box
+
+**jitter + line plot** -> runtime, imdb_rating, critics_score
+
+We will be creating Side-Side box plots for all the categorical variables and jitter+line plots for all the numerical varables. All the plots will have Audience Score on the y-axis. 
+
+This has been mentioned just for mental clarity. 
+
+
+**Title Type**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=title_type, fill=title_type ) ) + geom_boxplot() + ggtitle("Audience Score vs Title type") +  ylab("Audience Score") + xlab("Type of Title") + scale_fill_manual(values = c("#9c869f",
+"#f77e8a", "#ffa600"))
+```
+
+According to the plot, *Documentary films* have significantly higher Audience score compared to the other two. Moreover, *Tv Movies* have more variability in the Audience Score with more variability in 0-75 score. 
+
+
+
+**Genre**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=genre, fill=genre ) ) + geom_boxplot() + ggtitle("Audience Score vs Genre") +  xlab("Genre") + ylab("Audience Score") + scale_fill_manual(values = c("#846B87", "#9c869f", "#b585a5", "#d281a1", "#ec7e94", "#ff7f7e", "#ff8562", "#ff933f", "#ffa600", "#ffc375", "#fbe1c7")) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+According to the plot, *Documentaries* have significantly higher Audience score compared to the others. Moreover, *Science Fiction & Fantasies* have most variability in the Audience Score. Some of the box plots do have one or two outliers. 
+
+
+**MPAA Rating**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=mpaa_rating, fill=mpaa_rating ) ) + geom_boxplot() + ggtitle("Audience Score vs MPAA Rating") +  xlab("MPAA Rating") + ylab("Audience Score") + scale_fill_manual(values = c("#9c869f", "#c183a5", "#e77f97", "#ff8079", "#ff8d4e", "#ffa600")) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+According to the plot, *Unrated films* have significantly higher Audience score compared to the others but they also have 3 outliers. Moreover, *NC-17 films* have least variability in the Audience Score.  
+
+
+**Critics Rating**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=critics_rating, fill=critics_rating ) ) + geom_boxplot() + ggtitle("Audience Score vs Critics Rating") +  xlab("Critics Rating") + ylab("Audience Score") + scale_fill_manual(values = c("#9c869f",
+"#f77e8a", "#ffa600"))
+```
+
+According to the plot, *Certified fresh films* have the highest Audience score but it is still comparable to *Fresh movies*. Moreover, *Rotten Movies* have most variability in the Audience Score and have the least Audience Score
+
+
+**Audience Rating**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=audience_rating, fill=audience_rating ) ) + geom_boxplot() + ggtitle("Audience Score vs Audience Rating") +  xlab("Audience Rating") + ylab("Audience Score") + scale_fill_manual(values = c("#9c869f", "#ffa600"))
+```
+
+According to the plot, *Upright films* have significantly higher Audience score compared to *Spilled movies*. The difference is quite a lot.They both have similar variability. 
+
+
+**Best Director**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=best_dir_win, fill=best_dir_win ) ) + geom_boxplot() + ggtitle("Audience Score vs Best Director") +  xlab("Best Director") + ylab("Audience Score") + scale_fill_manual(values = c("#9c869f", "#ffa600"))
+```
+
+According to the plot, there isnt a stark difference between movies directed by individuals who have won an Oscar and the ones who have not. Oscar winning directors are just slightly higher than the non oscar winning directors. 
+
+**Top 200**
+```{r}
+ggplot(data=my_data, aes(y= audience_score, x=top200_box, fill=top200_box ) ) + geom_boxplot() + ggtitle("Audience Score vs Top 200") +  xlab("Top 200") + ylab("Audience Score") + scale_fill_manual(values = c("#9c869f", "#ffa600"))
+```
+
+
+
+**Runtime**
+```{r}
+ggplot(data = my_data, aes(x = runtime, y = audience_score)) +
+  geom_jitter() + geom_smooth(method = "lm", se = FALSE) +  xlab("Runtime") + ylab("Audience Score") + ggtitle("Audience Score vs Runtime")
+```
+
+There is somewhat of a possitive association between Runtime and Audience Score. 
+
+
+**IMDB Rating**
+```{r}
+ggplot(data = my_data, aes(x = imdb_rating, y = audience_score)) +
+  geom_jitter() + geom_smooth(method = "lm", se = FALSE) +  xlab("IMDB Rating") + ylab("Audience Score") + ggtitle("Audience Score vs IMDB Rating")
+```
+
+There is a clear positive association between IMDB Rating and Audience Score with most of the dots being very close to the line. 
+
+
+**Critics Score**
+```{r}
+ggplot(data = my_data, aes(x = critics_score, y = audience_score)) +
+  geom_jitter() + geom_smooth(method = "lm", se = FALSE) +  xlab("Critics Score") + ylab("Audience Score") + ggtitle("Audience Score vs Critics Score")
+```
+
+There is a clear positive association between Critics score and Audience Score with the dots spread out around the line. 
+
+
+* * *
+
+## Part 4: Modeling
+
+Now, we wil be finding the perfct model for audience score. So first, lets see a summary of all the variables and how they affect the audience score. 
+
+We will be including all the variables present in our subset my_data since all of them showed some variability in their plots and can have certain association with the audience score. 
+
+```{r}
+model<-lm(audience_score~.,data=my_data)
+summary(model)
+```
+
+
+Now, to find a best fit model, we will using the step function which will reduce the number of steps for this process. It is a function that runs the model and drops one variable at a time to find the best fit model. 
+
+This process uses **backward elimination** as it drops one variable at a time to check the increase in the adjusted R square. 
+
+Lets look at its summary: 
+```{r}
+pars_model<-step(model, direction = "both", trace=FALSE ) 
+summary(pars_model)
+```
+As we can see above, we have found our best fit model: **audience_score ~ genre + runtime + imdb_rating + critics_score + audience_rating**
+
+
+**Summary of our best fit model:**
+```{r}
+pars_model
+```
+Model: 
+audience_score ~ -9.5 + 3.08(genre-Animation) - 2.83(genre-House) + 1.3(genre-Comedy) - 0.035(genre-Documentary) - 0.92(genre-Drama) - 2.04(genre-Horror) + 2.41(genre-Musical) - 3.3(genre-Mystery) + 0.13(genre-Other) - 0.076(genre-Scifi) - 0.022(runtime) + 9.53(imdb_rating) + 0.023(critics_score) + 20.13(audience_rating-Upright) 
+
+For audience_rating-spilled -> make the last variable 0 
+
+For genre-action -> make all the genre variables 0 
+
+Now, let us check the conditions for multiple linear regression:
+
+1. Linearity
+
+2. Nearly normal residues (with its centre at 0)
+
+3. Constant variability (Homoscedasticity)
+
+
+**1. Linearity**
+```{r}
+ggplot(data = pars_model, aes(sample = .resid)) +
+  stat_qq()
+```
+
+Above, we can see that the residual plot is mostly linear.  
+
+
+**2. Nearly normal residual plot**
+```{r}
+ggplot(data = pars_model, aes(x = .resid)) +
+  geom_histogram(binwidth = 1, fill='#9c869f', color='black') +
+  xlab("Residuals")
+```
+
+As we can see, the residual plot has a nearly normal shape and is centered near 0. 
+
+
+**Constant Variability**
+```{r}
+ggplot(data = pars_model, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  xlab("Fitted values") +
+  ylab("Residuals")
+```
+
+As we can see, the residual plot has a mostly random scatter around 0 and does not have a fan shape. 
+
+Therefore, we can say that, the conditions for multiple linear regression have been met. 
+
+* * *
+
+## Part 5: Prediction
+
+Now, we will take a movie released in 2017 - Dunkirk. 
+
+We will try to predict its popularity with the help of our model. 
+
+Our model : audience_score ~ genre + runtime + imdb_rating + critics_score + audience_rating
+
+Dunkirk (2017) -> in the code chunk, I have mentioned the necessary details of Dunkirk. The information has been taken from IMDB and Rotten Tomatoes. 
+```{r}
+genre <- "Action & Adventure"
+runtime <- 106
+imdb_rating <- 7.9
+critics_score <- 93
+audience_rating <- "Upright"
+
+Dunkirk <- data.frame (genre, runtime, imdb_rating, critics_score, audience_rating)
+```
+
+*For reference:*
+
+https://www.rottentomatoes.com/m/dunkirk_2017
+
+https://www.imdb.com/title/tt5013056/
+
+
+**Prediction**
+```{r}
+predict(pars_model, Dunkirk)
+```
+```{r}
+predict(pars_model, Dunkirk, interval = "prediction", level = 0.95)
+```
+
+We can say, that we are 95% confident that the average *audience score* of Dunkirk is expected to be between *72.108 and 99.3*. 
+
+* * *
+
+## Part 6: Conclusion
+
+We can safely say that the audience score has an association with a lot of other variables (audience_score ~ genre + runtime + imdb_rating + critics_score + audience_rating). This model can be used to predict the audience score of any movie. However, causal statements cannot be made since this is an observational study. 
+
+We have not considered certain variables for this analysis. For a more accurate analysis, more variables can be added to the sub data set. We could have also grouped the data year wise. That could have made our analysis and prediction more accurate. As the generations pass, the audience and their interests also change.
+

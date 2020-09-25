@@ -1,0 +1,2 @@
+"0","ggplot(data = my_data, aes(x = critics_score, y = audience_score)) +"
+"0","  geom_jitter() + geom_smooth(method = ""lm"", se = FALSE) +  xlab(""Critics Score"") + ylab(""Audience Score"") + ggtitle(""Audience Score vs Critics Score"")"

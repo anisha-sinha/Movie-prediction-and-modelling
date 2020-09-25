@@ -1,0 +1,2 @@
+"0","ggplot(data = my_data, aes(x = imdb_rating, y = audience_score)) +"
+"0","  geom_jitter() + geom_smooth(method = ""lm"", se = FALSE) +  xlab(""IMDB Rating"") + ylab(""Audience Score"") + ggtitle(""Audience Score vs IMDB Rating"")"

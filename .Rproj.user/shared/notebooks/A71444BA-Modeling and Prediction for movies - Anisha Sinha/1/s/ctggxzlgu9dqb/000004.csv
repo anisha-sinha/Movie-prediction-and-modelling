@@ -1,0 +1,1 @@
+"0","ggplot(data=my_data, aes(y= audience_score, x=mpaa_rating, fill=mpaa_rating ) ) + geom_boxplot() + ggtitle(""Audience Score vs MPAA Rating"") +  xlab(""MPAA Rating"") + ylab(""Audience Score"") + scale_fill_manual(values = c(""#9c869f"", ""#c183a5"", ""#e77f97"", ""#ff8079"", ""#ff8d4e"", ""#ffa600"")) + theme(axis.text.x = element_text(angle = 60, hjust = 1))"
